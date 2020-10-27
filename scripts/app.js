@@ -3,20 +3,20 @@ const doodler = document.createElement('div');
 const startButton = document.querySelector('.startBtn')
 let startPoint = 150;
 let doodlerLeftSpace = 50;
-let doodlerBottomSpace = startPoint
+let doodlerBottomSpace = startPoint;
 let platformCount = 5;
 let platforms = [];
 let upTimerId, downTimerId;
 let isJumping = true;
 let isGoingLeft, isGoingRight = false;
-let leftTimerId, rightTimerId;
+let leftTimerId, rightTimerId, movePlatTimer;
 let score = 0;
 
 let isGameOver = false;
 
 class Platform {
     constructor(newPlatBottom) {
-        this.bottom = newPlatBottom
+        this.bottom = newPlatBottom;
         this.left = Math.random() * 315;
         this.visual = document.createElement('div');
 
@@ -44,7 +44,6 @@ const createPlatforms = () => {
         let newPlatBottom = 100 + i * platGap;
         let newPlatform = new Platform(newPlatBottom);
         platforms.push(newPlatform);
-        console.log(platforms)
     }
 }
 
@@ -59,7 +58,6 @@ const moveplatforms = () => {
                 let firstPlatform = platforms[0].visual;
                 firstPlatform.classList.remove('platform');
                 platforms.shift();
-                console.log(platforms)
                 let newPlatform = new Platform(600);
                 platforms.push(newPlatform);
                 score++;
@@ -97,7 +95,6 @@ const fall = () => {
                 (doodlerLeftSpace <= (platform.left + 85)) &&
                 !isJumping 
             ) {
-                console.log("landed")
                 startPoint = doodlerBottomSpace;
                 jump();
         }
@@ -126,7 +123,7 @@ const moveLeft = () => {
         clearInterval(rightTimerId);
         isGoingRight = false;
     }
-    doodler.style.transform = 'scaleX(-1)'
+    doodler.style.transform = 'scaleX(-1)';
     isGoingLeft = true;
     leftTimerId = setInterval(function() {
         if (doodlerLeftSpace >= 0) {
@@ -161,44 +158,43 @@ const moveStraight = () => {
     isGoingRight = false;
     clearInterval(rightTimerId);
     clearInterval(leftTimerId);
-
 }
 
 const start = (isGameOver) => {
-    console.log(isGameOver);
     if (!isGameOver) {
         createPlatforms();
         createDoodler();
-        setInterval(moveplatforms,30);
+        movePlatTimer = setInterval(function() {
+            moveplatforms();
+        },30)
+        // setInterval(moveplatforms,30);
         jump();
         document.addEventListener('keyup',controls)
 ;    }
 }
 
 const gameOver = () => {
-    console.log("game over")
     isGameOver = true;
     while (grid.firstChild) {
         grid.removeChild(grid.firstChild)
     }
-    grid.innerHTML = score;
+    grid.innerHTML = "<p id='finMessage'>Game over!</p><p>Score: </p>" + score;
     clearInterval(upTimerId);
     clearInterval(downTimerId);
     clearInterval(leftTimerId);
     clearInterval(rightTimerId);
-    platforms = [];
-
+    clearInterval(movePlatTimer);
 }
 
 startButton.addEventListener('click', function() {
+    score = 0;
     startPoint = 150;
-    doodler.style.bottom = 0 + 'px'
     doodlerLeftSpace = 50;
-    doodlerBottomSpace = startPoint
+    doodlerBottomSpace = startPoint;
     platforms = [];
+    doodler.style.bottom = 0 + 'px'
     isJumping = true;
     isGoingLeft, isGoingRight = false;
-    score = 0;
     grid.innerHTML = "";
     isGameOver = false;
     start(isGameOver);
