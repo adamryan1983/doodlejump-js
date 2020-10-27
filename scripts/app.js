@@ -179,11 +179,7 @@ const gameOver = () => {
         grid.removeChild(grid.firstChild)
     }
     grid.innerHTML = "<p id='finMessage'>Game over!</p><p>Score: </p>" + score;
-    clearInterval(upTimerId);
-    clearInterval(downTimerId);
-    clearInterval(leftTimerId);
-    clearInterval(rightTimerId);
-    clearInterval(movePlatTimer);
+
 }
 
 startButton.addEventListener('click', function() {
@@ -197,5 +193,10 @@ startButton.addEventListener('click', function() {
     isGoingLeft, isGoingRight = false;
     grid.innerHTML = "";
     isGameOver = false;
+    clearInterval(upTimerId);
+    clearInterval(downTimerId);
+    clearInterval(leftTimerId);
+    clearInterval(rightTimerId);
+    clearInterval(movePlatTimer);
     start(isGameOver);
 });
